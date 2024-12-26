@@ -1,0 +1,18 @@
+!SESSION 2024-12-26 16:23:38.494 -----------------------------------------------
+eclipse.buildId=Version 1.17.0
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=es_ES
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-12-26 16:23:59.130
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-12-26 16:23:59.131
+!MESSAGE Log4j2 initialized with config file C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-12-26 16:24:02.249
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-12-26 16:25:47.470
+!MESSAGE Indexed 'Aiming_Control_Proyect' (34 sources, 100 headers) in 4.09 sec: 7,831 declarations; 50,035 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0035%)
