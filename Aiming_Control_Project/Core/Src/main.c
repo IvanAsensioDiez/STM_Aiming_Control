@@ -31,7 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-	#define ADCResolution 2000
+	#define ADCResolution 4096
 	#define ServoRange 180
 /* USER CODE END PD */
 
