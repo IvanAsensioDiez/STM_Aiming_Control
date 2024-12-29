@@ -33,6 +33,7 @@
 /* USER CODE BEGIN PD */
 	#define ADCResolution 4096
 	#define ServoRange 180
+	#define	Tolerance 0.05 // %/100
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -56,13 +57,14 @@ TIM_HandleTypeDef htim4;
 	volatile float Pos_S1;
 	volatile float Pos_S2;
 	volatile float Pos_S3;
+	int dir = 0;
 
 //HCSR-04 variables
 	uint32_t time;
 	uint32_t IC_Val1 = 0;
 	uint32_t IC_Val2 = 0;
 	uint32_t Difference = 0;
-	uint8_t Is_First_Captured = 0;  // is the first value captured ?
+	uint8_t Is_First_Captured = 0;
 	uint8_t Distance  = 0;
 
 
@@ -102,31 +104,48 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 
 /*----------------------------------ServoADC Code End--------------------------------------*/
 
+/*---------------------------------Servo Position Code--------------------------------------*/
+void SetPosition(TIM_HandleTypeDef *htim,uint16_t PulseWidth){
+	HAL_TIM_PWM_COMPARE(htim, TIM_CHANNEL_1, PulseWidth);
+}
+
+void Rotate(){
+	if(dir == 0 && Pos_S3 < ServoRange) {
+		HAL_TIM_PWM_COMPARE(htim3, TIM_CHANNEL_1, 2100);//2,1ms represents 180º
+		if (Pos_S3 > ServoRange*(1-Tolerance))
+			dir = 1;
+	}
+	else if (dir == 1 && Pos_S3 > 0){
+		HAL_TIM_PWM_COMPARE(htim3, TIM_CHANNEL_1, 900); //0,9ms represents 0º
+				if (Pos_S3 < ServoRange*(Tolerance))
+					dir = 0;
+	}
+}
+/*-------------------------------Servo Position Code End--------------------------------------*/
 
 /*-------------------------------------HCSR-04 Code--------------------------------------*/
 	void delay (uint16_t time)
 	{
-		__HAL_TIM_SET_COUNTER(&htim2, 0);
-		while (__HAL_TIM_GET_COUNTER (&htim2) < time);
+		__HAL_TIM_SET_COUNTER(&htim4, 0);
+		while (__HAL_TIM_GET_COUNTER (&htim4) < time);
 	}
-
 
 
 	void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 	{
-		if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2)  // if the interrupt source is channel1
+		if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_4)  //Channel 4 is exclusively used for HCSR-04 management
 		{
 			if (Is_First_Captured==0) // if the first value is not captured
 			{
-				IC_Val1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_2); // read the first value
+				IC_Val1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_4); // read the first value
 				Is_First_Captured = 1;  // set the first captured as true
 				// Now change the polarity to falling edge
-				__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_2, TIM_INPUTCHANNELPOLARITY_FALLING);
+				__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_4, TIM_INPUTCHANNELPOLARITY_FALLING);
 			}
 
 			else if (Is_First_Captured==1)   // if the first is already captured
 			{
-				IC_Val2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_2);  // read second value
+				IC_Val2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_4);  // read second value
 				__HAL_TIM_SET_COUNTER(htim, 0);  // reset the counter
 
 				if (IC_Val2 > IC_Val1)
@@ -144,7 +163,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 				Is_First_Captured = 0; // set it back to false
 
 				// set polarity to rising edge
-				__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_2, TIM_INPUTCHANNELPOLARITY_RISING);
+				__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_4, TIM_INPUTCHANNELPOLARITY_RISING);
 				__HAL_TIM_DISABLE_IT(&htim1, TIM_IT_CC1);
 			}
 		}
@@ -152,11 +171,11 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 
 	void HCSR04_Read (void)
 	{
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET); // pull the TRIG pin HIGH
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET); // pull the TRIG pin HIGH
 		delay(10);  // wait for 10 us
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_RESET);// pull the TRIG pin low
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);// pull the TRIG pin low
 
-		__HAL_TIM_ENABLE_IT(&htim1, TIM_IT_CC1);
+		__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_CC1);
 	}
 
 	/*---------------------------------HCSR-04 Code End--------------------------------------*/
@@ -206,8 +225,10 @@ int main(void)
   	  HAL_ADC_Start_IT(&hadc2);
       HAL_ADC_Start_IT(&hadc3);
  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
- 	  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
- 	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+ 	  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
+ 	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+ 	  HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_4);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -443,9 +464,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 160;
+  htim1.Init.Prescaler = 260-1;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 2000;
+  htim1.Init.Period = 2000-1;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -508,9 +529,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 160;
+  htim2.Init.Prescaler = 160-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 2000;
+  htim2.Init.Period = 2000-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_IC_Init(&htim2) != HAL_OK)
@@ -572,7 +593,7 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 160;
+  htim3.Init.Prescaler = 160-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim3.Init.Period = 2000;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -635,9 +656,9 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 99;
+  htim4.Init.Prescaler = 0;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 0xffff-1;
+  htim4.Init.Period = 65535;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_IC_Init(&htim4) != HAL_OK)
@@ -654,7 +675,7 @@ static void MX_TIM4_Init(void)
   sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
   sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
   sConfigIC.ICFilter = 0;
-  if (HAL_TIM_IC_ConfigChannel(&htim4, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
+  if (HAL_TIM_IC_ConfigChannel(&htim4, &sConfigIC, TIM_CHANNEL_4) != HAL_OK)
   {
     Error_Handler();
   }
