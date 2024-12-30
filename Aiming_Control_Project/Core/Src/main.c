@@ -96,9 +96,9 @@ void StartDefaultTask(void const * argument);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 /*-------------------------------------LCD Screen Code--------------------------------------*/
-void escribirMensajeLCD(const char *mensaje) {
-    lcdClear();
-    lcdSetCursorPosition(0, 0);
+void escribirMensajeLCD(uint8_t r, uint8_t c, const char *mensaje) {
+    lcdDisplayClear();
+    lcdSetCursorPosition(r, c);
 
     lcdPrintStr((uint8_t*)mensaje, strlen(mensaje));
 }
