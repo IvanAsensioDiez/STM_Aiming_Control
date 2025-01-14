@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "i2c-lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +45,8 @@
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
 ADC_HandleTypeDef hadc3;
+
+I2C_HandleTypeDef hi2c1;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
@@ -80,6 +82,7 @@ static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -225,6 +228,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   	  HAL_ADC_Start_IT(&hadc1);
   	  HAL_ADC_Start_IT(&hadc2);
@@ -233,7 +237,7 @@ int main(void)
  	  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
  	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
  	  HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_4);
-
+ 	  lcd_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -242,11 +246,14 @@ int main(void)
   {
 	  HCSR04_Read();
 
-	  if(Distance < 5)
+	  if(Distance < 5){
 		  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,1);
-	  else
+	  	  lcd_enviar( "AWUEBO", 0, 2);
+	  }
+	  else{
 		  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,0);
-
+	  	  lcd_clear();
+	  }
 	  HAL_Delay(1000);
 
     /* USER CODE END WHILE */
@@ -455,6 +462,40 @@ static void MX_ADC3_Init(void)
   /* USER CODE BEGIN ADC3_Init 2 */
 
   /* USER CODE END ADC3_Init 2 */
+
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
 
 }
 
