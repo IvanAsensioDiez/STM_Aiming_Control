@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Aiming_Control_Project
+BUILD_ARTIFACT_NAME := JOY ADC
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Aiming_Control_Project.elf \
+JOY\ ADC.elf \
 
 MAP_FILES += \
-Aiming_Control_Project.map \
+JOY\ ADC.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Aiming_Control_Project.list \
+JOY\ ADC.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Aiming_Control_Project.elf secondary-outputs
+main-build: JOY\ ADC.elf secondary-outputs
 
 # Tool invocations
-Aiming_Control_Project.elf Aiming_Control_Project.map: $(OBJS) $(USER_OBJS) C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+JOY\ ADC.elf JOY\ ADC.map: $(OBJS) $(USER_OBJS) C:\Users\mariu\STM32CubeIDE\workspace_1.17.0\JOY\ ADC\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "JOY ADC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\mariu\STM32CubeIDE\workspace_1.17.0\JOY ADC\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="JOY ADC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Aiming_Control_Project.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Aiming_Control_Project.list"
+JOY\ ADC.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "JOY ADC.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) Aiming_Control_Project.elf Aiming_Control_Project.list Aiming_Control_Project.map default.size.stdout
+	-$(RM) JOY\ ADC.elf JOY\ ADC.list JOY\ ADC.map JOY\\ ADC.elf default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
