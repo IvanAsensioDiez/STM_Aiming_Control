@@ -60,8 +60,8 @@ all: main-build
 main-build: JOY\ ADC.elf secondary-outputs
 
 # Tool invocations
-JOY\ ADC.elf JOY\ ADC.map: $(OBJS) $(USER_OBJS) C:\Users\mariu\STM32CubeIDE\workspace_1.17.0\JOY\ ADC\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "JOY ADC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\mariu\STM32CubeIDE\workspace_1.17.0\JOY ADC\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="JOY ADC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+JOY\ ADC.elf JOY\ ADC.map: $(OBJS) $(USER_OBJS) C:\Users\juans\OneDrive\Escritorio\Universidad\Cuarto\Sistemas\ Electrnicos\ Digitales\TRABAJO\STM_Aiming_Control\JOY\ ADC\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "JOY ADC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\juans\OneDrive\Escritorio\Universidad\Cuarto\Sistemas Electrnicos Digitales\TRABAJO\STM_Aiming_Control\JOY ADC\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="JOY ADC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
