@@ -1,6 +1,5 @@
-11:24:58 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+13:52:12 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
 make -j16 all 
-arm-none-eabi-gcc "../Core/Src/i2c-lcd.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/i2c-lcd.d" -MT"Core/Src/i2c-lcd.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/i2c-lcd.o"
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
 arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: Aiming_Control_Project.elf
@@ -8,11 +7,11 @@ Finished building target: Aiming_Control_Project.elf
 arm-none-eabi-size  Aiming_Control_Project.elf 
 arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
    text	   data	    bss	    dec	    hex	filename
-  21248	     12	   2188	  23448	   5b98	Aiming_Control_Project.elf
+  19992	     16	   2176	  22184	   56a8	Aiming_Control_Project.elf
 Finished building: default.size.stdout
  
 Finished building: Aiming_Control_Project.list
  
 
-11:25:04 Build Finished. 0 errors, 0 warnings. (took 5s.733ms)
+13:52:13 Build Finished. 0 errors, 0 warnings. (took 861ms)
 

@@ -1,6 +1,279 @@
-11:24:58 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+12:51:22 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
 make -j16 all 
-arm-none-eabi-gcc "../Core/Src/i2c-lcd.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/i2c-lcd.d" -MT"Core/Src/i2c-lcd.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/i2c-lcd.o"
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19688	     12	   2172	  21872	   5570	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+12:57:12 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19688	     12	   2172	  21872	   5570	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+13:00:01 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19688	     12	   2172	  21872	   5570	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+13:00:21 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19688	     12	   2172	  21872	   5570	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+13:01:15 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19688	     12	   2172	  21872	   5570	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+13:08:01 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19688	     12	   2172	  21872	   5570	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+13:08:07 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19688	     12	   2172	  21872	   5570	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+13:08:22 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:304:5: warning: "/*" within comment [-Wcomment]
+  304 |     /* USER CODE END WHILE */
+      |      
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19688	     12	   2172	  21872	   5570	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:08:54 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:304:5: warning: "/*" within comment [-Wcomment]
+  304 |     /* USER CODE END WHILE */
+      |      
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19688	     12	   2172	  21872	   5570	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:09:36 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:304:5: warning: "/*" within comment [-Wcomment]
+  304 |     /* USER CODE END WHILE */
+      |      
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19692	     12	   2172	  21876	   5574	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:13:16 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19692	     12	   2172	  21876	   5574	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+13:16:20 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:304:5: warning: "/*" within comment [-Wcomment]
+  304 |     /* USER CODE END WHILE */
+      |      
+../Core/Src/main.c:260:15: warning: unused variable 'b' [-Wunused-variable]
+  260 |           int b=0;
+      |               ^
+../Core/Src/main.c:259:15: warning: unused variable 'a' [-Wunused-variable]
+  259 |           int a=90;
+      |               ^
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19684	     16	   2176	  21876	   5574	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:26:51 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:283:10: error: 'else' without a previous 'if'
+  283 |          else a=90;
+      |          ^~~~
+../Core/Src/main.c:305:5: warning: "/*" within comment [-Wcomment]
+  305 |     /* USER CODE END WHILE */
+      |      
+make: *** [Core/Src/subdir.mk:37: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+13:27:03 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:283:10: error: 'else' without a previous 'if'
+  283 |          else a=90;
+      |          ^~~~
+../Core/Src/main.c:305:5: warning: "/*" within comment [-Wcomment]
+  305 |     /* USER CODE END WHILE */
+      |      
+make: *** [Core/Src/subdir.mk:37: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+13:27:36 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:305:5: warning: "/*" within comment [-Wcomment]
+  305 |     /* USER CODE END WHILE */
+      |      
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19836	     16	   2176	  22028	   560c	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:28:13 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:305:5: warning: "/*" within comment [-Wcomment]
+  305 |     /* USER CODE END WHILE */
+      |      
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19832	     16	   2176	  22024	   5608	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:28:49 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:305:5: warning: "/*" within comment [-Wcomment]
+  305 |     /* USER CODE END WHILE */
+      |      
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19832	     16	   2176	  22024	   5608	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:29:35 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:283:10: error: expected '}' before 'else'
+  283 |          else a=90;
+      |          ^~~~
+../Core/Src/main.c:305:5: warning: "/*" within comment [-Wcomment]
+  305 |     /* USER CODE END WHILE */
+      |      
+make: *** [Core/Src/subdir.mk:37: Core/Src/main.o] Error 1
+"make -j16 all" terminated with exit code 2. Build might be incomplete.
+13:29:47 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:306:5: warning: "/*" within comment [-Wcomment]
+  306 |     /* USER CODE END WHILE */
+      |      
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19820	     16	   2176	  22012	   55fc	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:30:30 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19820	     16	   2176	  22012	   55fc	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+13:34:13 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:306:5: warning: "/*" within comment [-Wcomment]
+  306 |     /* USER CODE END WHILE */
+      |      
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19832	     16	   2176	  22024	   5608	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:35:33 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19832	     16	   2176	  22024	   5608	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+13:49:22 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
 arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: Aiming_Control_Project.elf
@@ -8,7 +281,21 @@ Finished building target: Aiming_Control_Project.elf
 arm-none-eabi-size  Aiming_Control_Project.elf 
 arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
    text	   data	    bss	    dec	    hex	filename
-  21248	     12	   2188	  23448	   5b98	Aiming_Control_Project.elf
+  19992	     16	   2176	  22184	   56a8	Aiming_Control_Project.elf
+Finished building: default.size.stdout
+ 
+Finished building: Aiming_Control_Project.list
+ 
+13:52:12 **** Incremental Build of configuration Debug for project Aiming_Control_Project ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Aiming_Control_Project.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\ivano\OneDrive\Documentos\GitHub\STM_Aiming_Control\Aiming_Control_Project\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Aiming_Control_Project.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Aiming_Control_Project.elf
+ 
+arm-none-eabi-size  Aiming_Control_Project.elf 
+arm-none-eabi-objdump -h -S Aiming_Control_Project.elf  > "Aiming_Control_Project.list"
+   text	   data	    bss	    dec	    hex	filename
+  19992	     16	   2176	  22184	   56a8	Aiming_Control_Project.elf
 Finished building: default.size.stdout
  
 Finished building: Aiming_Control_Project.list

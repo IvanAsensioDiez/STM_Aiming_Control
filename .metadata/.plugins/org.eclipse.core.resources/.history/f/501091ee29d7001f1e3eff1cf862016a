@@ -32,7 +32,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 	#define ADCResolution 4096
-	#define ServoRange 180
+	#define ServoRange 120
 	#define	Tolerance 0.05 // %/100
 /* USER CODE END PD */
 
@@ -46,6 +46,8 @@ ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
 ADC_HandleTypeDef hadc3;
 
+I2C_HandleTypeDef hi2c1;
+
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -54,10 +56,12 @@ TIM_HandleTypeDef htim4;
 /* USER CODE BEGIN PV */
 
 //Servomotor variables
-	volatile float Pos_S1;
-	volatile float Pos_S2;
-	volatile float Pos_S3;
+    float Pos_S1;
+	float Pos_S2;
+	float Pos_S3;
+	uint32_t adcval;
 	int dir = 0;
+	int coord1=90;
 
 //HCSR-04 variables
 	uint32_t time;
@@ -80,6 +84,7 @@ static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -88,18 +93,20 @@ static void MX_TIM4_Init(void);
 /* USER CODE BEGIN 0 */
 
 /*-------------------------------------ServoADC Code--------------------------------------*/
-float GetPosition(ADC_HandleTypeDef* hadc){
-	float val = HAL_ADC_GetValue(hadc);
-	return (val/ADCResolution)*ServoRange;
+float GetPosition(uint32_t val){
+	return ((float)val/ADCResolution)*ServoRange;
 }
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
-		if(hadc->Instance == ADC1)
-			 Pos_S1 = GetPosition(hadc);
-		else if (hadc->Instance == ADC2)
-			Pos_S2 = GetPosition(hadc);
-		else if (hadc->Instance == ADC3)
-			Pos_S3 = GetPosition(hadc);
+uint32_t ReadServo(ADC_HandleTypeDef* hadc){
+	uint32_t value;
+
+	HAL_ADC_Start(hadc);
+		  if (HAL_ADC_PollForConversion(hadc,HAL_MAX_DELAY)==HAL_OK) {
+		   value = HAL_ADC_GetValue(hadc);
+		  }
+	HAL_ADC_Stop(hadc);
+
+	return value;
 	}
 
 /*----------------------------------ServoADC Code End--------------------------------------*/
@@ -115,16 +122,33 @@ void SetPosition(TIM_HandleTypeDef *htim,uint16_t PulseWidth){
 }
 
 void Rotate(){
-	if(dir == 0 && Pos_S3 < ServoRange) {
-	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 2100);//2,1ms represents 180º
-		if (Pos_S3 > ServoRange*(1-Tolerance))
+
+    HAL_Delay(10);
+	if(dir == 0 && coord1 <= 210) {
+		coord1++;
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, coord1);//2,1ms represents 180º
+			if (coord1==210)
+				dir = 1;
+		}
+	if(dir == 1 && coord1 >= 90) {
+		coord1--;
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, coord1);//2,1ms represents 180º
+			if (coord1<=90)
+				dir = 0;
+		}
+
+	/*	 if(dir == 0 && Pos_S1 < ServoRange) {
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pos);//2,1ms represents 180º
+		if (Pos_S1 > ServoRange*(1-Tolerance))
 			dir = 1;
 	}
-	else if (dir == 1 && Pos_S3 > 0){
-	__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, 900); //0,9ms represents 0º
-				if (Pos_S3 < ServoRange*(Tolerance))
+
+	else if (dir == 1 && Pos_S1 > 0){
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pos); //0,9ms represents 0º
+				if (Pos_S1 < ServoRange*(Tolerance))
 					dir = 0;
 	}
+	*/
 }
 /*-------------------------------Servo Position Code End--------------------------------------*/
 
@@ -225,30 +249,58 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  	  HAL_ADC_Start_IT(&hadc1);
-  	  HAL_ADC_Start_IT(&hadc2);
-      HAL_ADC_Start_IT(&hadc3);
  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
  	  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
  	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
  	  HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_4);
  	  lcd_init();
+ 	  int a=90;
+ 	  int b=0;
+ 	  //int pantalla=0;
+ 	 lcd_clear();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HCSR04_Read();
 
-	  if(Distance < 5)
+	// HCSR04_Read();
+	// HAL_Delay(5);
+	// Pos_S1 = GetPosition(ReadServo(&hadc1));
+	// Pos_S2 = GetPosition(ReadServo(&hadc2));
+	// Pos_S3 = GetPosition(ReadServo(&hadc3));
+	 b++;
+	 if(b==10000){
+		 b=0;
+		 a++;
+	 }
+	 if(a<210)
+	 SetPosition(&htim2, a);
+	 SetPosition(&htim3, a);
+	 else a=90;
+
+	 Rotate();
+
+
+	//  Pos_S3 = GetPosition(ReadServo(&hadc3));
+/*
+	  if(Distance < 10){
 		  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,1);
-	  	  lcd_enviar("AWUEBO",0,2);
-	  else
+		  if (pantalla==0){
+	  	  lcd_enviar( "TARGET", 0, 2);
+		  pantalla=1;
+		  }
+	  }
+	  else{
 		  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,0);
-
-	  HAL_Delay(1000);
+		  if (pantalla==1){
+	  	  lcd_clear();
+		  pantalla=0;
+		  }
+	  }
 
     /* USER CODE END WHILE */
 
@@ -456,6 +508,40 @@ static void MX_ADC3_Init(void)
   /* USER CODE BEGIN ADC3_Init 2 */
 
   /* USER CODE END ADC3_Init 2 */
+
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
 
 }
 
