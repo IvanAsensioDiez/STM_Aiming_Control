@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "i2c-lcd.h"
+#include "math.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,6 +49,8 @@ ADC_HandleTypeDef hadc3;
 
 I2C_HandleTypeDef hi2c1;
 
+SPI_HandleTypeDef hspi1;
+
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -62,7 +65,9 @@ TIM_HandleTypeDef htim4;
 	uint32_t adcval;
 	int dir = 0;
 	int coord1=90;
-
+//Angulos de consigna para servomotores
+	double angulo_servox=0;
+	double angulo_servoy=0;
 //HCSR-04 variables
 	uint32_t time;
 	uint32_t IC_Val1 = 0;
@@ -71,6 +76,20 @@ TIM_HandleTypeDef htim4;
 	uint8_t Is_First_Captured = 0;
 	uint8_t Distance  = 0;
 
+//Joystick variables
+	uint8_t joystick_data[5];  // Buffer de datos del joystick
+	uint16_t boton1;
+	uint16_t boton2;
+	uint16_t angulo;
+	uint16_t v_directorx;
+	uint16_t v_directory;
+	double angulo_grados;
+
+	double x_value=0;
+	double y_value=0;
+
+    double pos_servo2=90;
+    double pos_servo3=90;
 
 /* USER CODE END PV */
 
@@ -85,6 +104,7 @@ static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -125,13 +145,13 @@ void Rotate(){
 
     HAL_Delay(10);
 	if(dir == 0 && coord1 <= 210) {
-		coord1++;
+		coord1=coord1+3;
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, coord1);//2,1ms represents 180º
 			if (coord1==210)
 				dir = 1;
 		}
 	if(dir == 1 && coord1 >= 90) {
-		coord1--;
+		coord1-=3;
 		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, coord1);//2,1ms represents 180º
 			if (coord1<=90)
 				dir = 0;
@@ -210,6 +230,93 @@ void Rotate(){
 	/*---------------------------------HCSR-04 Code End--------------------------------------*/
 
 
+	//Lectura y tratamiento de coordenadas
+	void read_joystick_position(void) {
+	    uint8_t command = 0x00;  // Comando para leer datos del joystick (según el manual)
+
+	    // Activamos el CS
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+
+	    //Transmitimos para leer
+	    HAL_SPI_Transmit(&hspi1, &command, 1, HAL_MAX_DELAY);
+
+	    // Recibimos el buffer de datos del joystick
+	    HAL_SPI_Receive(&hspi1, joystick_data, 5, HAL_MAX_DELAY);
+
+	    // Cerramos el CS
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET);
+
+	    // Procesar los datos: joystick_data[1] y joystick_data[2] son las posiciones X e Y
+	    v_directorx = joystick_data[0];
+	    angulo = joystick_data[1];  //Valores de angulo
+	    v_directory = joystick_data[2];  //Sectores de angulo
+	    boton1 = joystick_data[3]; //Boton central y lateral
+	    boton2 = joystick_data[4]; //Confirmación de boton central y lateral
+
+
+	    //Boton lateral o central como seguro
+	    if(boton2)
+	    	          {
+	    	//Valores de coordenadas en x e y para azimut y giro
+	    		          x_value= 100-100*cos((M_PI*angulo_grados)/180);
+	    		          y_value= 100+100*sin((M_PI*angulo_grados)/180);
+
+	    		          //pos_servo2=90.0+(120.0/200.0)*(x_value);
+						  if(x_value>50.0 && pos_servo2<210.0)pos_servo2+=1;
+						  if(x_value<150.0 && pos_servo2>90.0)pos_servo2-=1;
+						  //pos_servo3=90.0+(120.0/200.0)*(y_value);
+						  if(y_value<50.0 && pos_servo3<210.0)pos_servo3+=1;
+						  if(y_value>150.0 && pos_servo3>90.0)pos_servo3-=1;
+
+	    		          //Sector 0-60
+	    		          if(v_directorx>1 && v_directory> 1 && v_directory< 3)
+	    		            {
+	    		          	 angulo_grados=60*1.0*angulo/255;
+	    		            }
+	    		          //Sector 60-90
+	    		            else if(v_directory== 3 && v_directorx>1)
+	    		            {
+	    		          	 angulo_grados= 60+30*angulo*1.0/68;
+	    		            }
+	    		          //Sector 90-120
+	    		            else if(v_directory== 3 && v_directorx<2)
+	    		            {
+	    		            	 angulo_grados= 90+30*(68-angulo)*1.0/68;
+	    		            }
+	    		          //Sector 120-180
+	    		            else if(v_directorx<2 && v_directory> 1 && v_directory< 3)
+	    		            {
+	    		               angulo_grados= 120+60*(255-angulo)*1.0/255;
+	    		            }
+	    		          //Sector 180-240
+	    		            else if(v_directorx<2 && v_directory< 2 && v_directory> 0)
+	    		            {
+	    		               angulo_grados= 180+60*(255-angulo)*1.0/255;
+	    		            }
+	    		          //Sector 240-270
+	    		            else if(v_directory== 0 && v_directorx<2)
+	    		            {
+	    		               angulo_grados= 240-30*(angulo-255)*1.0/68;
+	    		            }
+	    		          //Sector 270-300
+	    		            else if(v_directory== 0 && v_directorx>1)
+	    		            {
+	    		                 angulo_grados= 270+30*(angulo-255+68)*1.0/68;
+	    		            }
+	    		          //Sector 300-330
+	    		            else if(v_directorx>1 && v_directory< 2 && v_directory> 0)
+	    		            {
+	    		          	 angulo_grados= 300+60*(angulo)*1.0/255;
+	    		            }
+	    	          }
+	    	          else
+	    	          {
+	    	        	  //Si se ha quitado el seguro valores por defecto a cero y la torreta se queda inmovil
+	    	        	  //x_value= 0;
+	    	        	  //y_value= 0;
+	    	          }
+	}
+	//Joystick
 
 /* USER CODE END 0 */
 
@@ -250,6 +357,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_I2C1_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
  	  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
@@ -258,6 +366,7 @@ int main(void)
  	  lcd_init();
  	  int a=90;
  	  int b=0;
+
  	  //int pantalla=0;
  	 lcd_clear();
   /* USER CODE END 2 */
@@ -268,14 +377,16 @@ int main(void)
   {
 
 	HCSR04_Read();
+
 	// HAL_Delay(5);
 	// Pos_S1 = GetPosition(ReadServo(&hadc1));
 	// Pos_S2 = GetPosition(ReadServo(&hadc2));
 	// Pos_S3 = GetPosition(ReadServo(&hadc3));
-
+/*
 	b++;
 			  	 if(b==1){
 			  		 b=0;
+			  		 a++;
 			  		 a++;
 			  	 }
 			  	 if(a<210){
@@ -284,8 +395,11 @@ int main(void)
 			  	 }
 			  	 else a=90;
 
-			  	 Rotate();
 
+*/
+	Rotate();
+	SetPosition(&htim2, pos_servo2);
+	SetPosition(&htim3, pos_servo3);
 	//  Pos_S3 = GetPosition(ReadServo(&hadc3));
 
 	  if(Distance < 10){
@@ -304,6 +418,11 @@ int main(void)
 		  }*/
 	  }
 
+	  //Llamada a la función de lectura
+	  	          read_joystick_position();
+
+	  	          // Retardo recomendado en la DATASHEET
+	  	          HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -548,6 +667,44 @@ static void MX_I2C1_Init(void)
 }
 
 /**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
   * @brief TIM1 Initialization Function
   * @param None
   * @retval None
@@ -779,6 +936,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PA4 */
@@ -787,6 +947,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB11 */
+  GPIO_InitStruct.Pin = GPIO_PIN_11;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PD12 */
   GPIO_InitStruct.Pin = GPIO_PIN_12;
