@@ -18,7 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "stdio.h"
+#include <string.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "i2c-lcd.h"
@@ -55,6 +56,7 @@ TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
+TIM_HandleTypeDef htim8;
 
 /* USER CODE BEGIN PV */
 
@@ -88,9 +90,13 @@ TIM_HandleTypeDef htim4;
 	double x_value=0;
 	double y_value=0;
 
-    double pos_servo2=90;
-    double pos_servo3=90;
+    double pos_servo2=150;
+    double pos_servo3=150;
+    int pantalla=0;
 
+    char BufX[50];
+    char BufY[50];
+    char Buff[100];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -105,12 +111,18 @@ static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_TIM8_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/*-----------------------------Shoot init-------------------------------------------------*/
+void ShootPWMInit(uint16_t s){
+	__HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1,s);
+}
+/*---------------------------End Shoot init-------------------------------------------------*/
 
 /*-------------------------------------ServoADC Code--------------------------------------*/
 float GetPosition(uint32_t val){
@@ -130,7 +142,19 @@ uint32_t ReadServo(ADC_HandleTypeDef* hadc){
 	}
 
 /*----------------------------------ServoADC Code End--------------------------------------*/
-
+/*----------------------------------Display Code-------------------------------------------*/
+void DrawDisplay(){
+	memset(Buff,0,sizeof(Buff));
+	gcvt(Pos_S2, 4, BufX);
+	gcvt(Pos_S3, 4, BufY);
+	strcat(Buff,"X:");
+	strcat(Buff,BufX);
+	strcat(Buff," Y:");
+	strcat(Buff,BufY);
+	lcd_enviar( "TARGET DETECTED", 0, 0);
+	lcd_enviar(Buff , 1, 0);
+}
+/*----------------------------------Display Code End---------------------------------------*/
 /*---------------------------------Servo Position Code--------------------------------------*/
 void SetPosition(TIM_HandleTypeDef *htim,uint16_t PulseWidth){
 	if(htim->Instance == TIM1)
@@ -156,19 +180,6 @@ void Rotate(){
 			if (coord1<=90)
 				dir = 0;
 		}
-
-	/*	 if(dir == 0 && Pos_S1 < ServoRange) {
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pos);//2,1ms represents 180º
-		if (Pos_S1 > ServoRange*(1-Tolerance))
-			dir = 1;
-	}
-
-	else if (dir == 1 && Pos_S1 > 0){
-	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pos); //0,9ms represents 0º
-				if (Pos_S1 < ServoRange*(Tolerance))
-					dir = 0;
-	}
-	*/
 }
 /*-------------------------------Servo Position Code End--------------------------------------*/
 
@@ -358,45 +369,29 @@ int main(void)
   MX_TIM4_Init();
   MX_I2C1_Init();
   MX_SPI1_Init();
+  MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
  	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
  	  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
  	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+ 	  HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
  	  HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_4);
  	  lcd_init();
- 	  int a=90;
- 	  int b=0;
+ 	  ShootPWMInit(3125);
+ 	  lcd_clear();
 
- 	  //int pantalla=0;
- 	 lcd_clear();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
 	HCSR04_Read();
 
-	// HAL_Delay(5);
-	// Pos_S1 = GetPosition(ReadServo(&hadc1));
-	// Pos_S2 = GetPosition(ReadServo(&hadc2));
-	// Pos_S3 = GetPosition(ReadServo(&hadc3));
-/*
-	b++;
-			  	 if(b==1){
-			  		 b=0;
-			  		 a++;
-			  		 a++;
-			  	 }
-			  	 if(a<210){
-			  	 SetPosition(&htim2, a);
-			  	 SetPosition(&htim3, a);
-			  	 }
-			  	 else a=90;
+	 Pos_S1 = GetPosition(ReadServo(&hadc1));
+	 Pos_S2 = GetPosition(ReadServo(&hadc2));
+	 Pos_S3 = GetPosition(ReadServo(&hadc3));
 
-
-*/
 	Rotate();
 	SetPosition(&htim2, pos_servo2);
 	SetPosition(&htim3, pos_servo3);
@@ -405,17 +400,17 @@ int main(void)
 	  if(Distance < 10){
 		  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,1);
 
-		  /*if (pantalla==0){
-	  	  lcd_enviar( "TARGET", 0, 2);
-		  pantalla=1;
-		  }*/
+		  if (pantalla==0){
+		    DrawDisplay();
+		    pantalla=1;
+		  }
 	  }
 	  else{
 		  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,0);
-		  /*if (pantalla==1){
-	  	  lcd_clear();
-		  pantalla=0;
-		  }*/
+		  if (pantalla==1){
+	  	    lcd_clear();
+		    pantalla=0;
+		  }
 	  }
 
 	  //Llamada a la función de lectura
@@ -916,6 +911,71 @@ static void MX_TIM4_Init(void)
 }
 
 /**
+  * @brief TIM8 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM8_Init(void)
+{
+
+  /* USER CODE BEGIN TIM8_Init 0 */
+
+  /* USER CODE END TIM8_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
+
+  /* USER CODE BEGIN TIM8_Init 1 */
+
+  /* USER CODE END TIM8_Init 1 */
+  htim8.Instance = TIM8;
+  htim8.Init.Prescaler = 255-1;
+  htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim8.Init.Period = 6250-1;
+  htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim8.Init.RepetitionCounter = 0;
+  htim8.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_PWM_Init(&htim8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim8, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+  if (HAL_TIM_PWM_ConfigChannel(&htim8, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
+  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
+  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
+  sBreakDeadTimeConfig.DeadTime = 0;
+  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
+  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
+  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
+  if (HAL_TIMEx_ConfigBreakDeadTime(&htim8, &sBreakDeadTimeConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM8_Init 2 */
+
+  /* USER CODE END TIM8_Init 2 */
+  HAL_TIM_MspPostInit(&htim8);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -931,6 +991,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
