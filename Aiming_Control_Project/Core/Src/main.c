@@ -33,9 +33,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 	#define ADCResolution 4096
 	#define ServoRange 120
-	#define	Tolerance 0.05 // %/100
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,29 +45,29 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-ADC_HandleTypeDef hadc1;
-ADC_HandleTypeDef hadc2;
-ADC_HandleTypeDef hadc3;
+	ADC_HandleTypeDef hadc1;
+	ADC_HandleTypeDef hadc2;
+	ADC_HandleTypeDef hadc3;
 
-I2C_HandleTypeDef hi2c1;
+	I2C_HandleTypeDef hi2c1;
 
-SPI_HandleTypeDef hspi1;
+	SPI_HandleTypeDef hspi1;
 
-TIM_HandleTypeDef htim1;
-TIM_HandleTypeDef htim2;
-TIM_HandleTypeDef htim3;
-TIM_HandleTypeDef htim4;
-TIM_HandleTypeDef htim8;
+	TIM_HandleTypeDef htim1;
+	TIM_HandleTypeDef htim2;
+	TIM_HandleTypeDef htim3;
+	TIM_HandleTypeDef htim4;
+	TIM_HandleTypeDef htim8;
 
 /* USER CODE BEGIN PV */
 
-//Servomotor variables
-    float Pos_S1;
+//Variables para la realimentación de servomotores
+    float Pos_S1; //No utilizada por problemas técnicos
 	float Pos_S2;
 	float Pos_S3;
-	uint32_t adcval;
+//Variables generales de los servomotores
 	int dir = 0;
-	int coord1=90;
+	uint32_t adcval;
 //Angulos de consigna para servomotores
 	double angulo_servox=0;
 	double angulo_servoy=0;
@@ -89,29 +90,32 @@ TIM_HandleTypeDef htim8;
 
 	double x_value=0;
 	double y_value=0;
-
-    double pos_servo2=150;
-    double pos_servo3=150;
+//Variables para el movimiento de los servos
+	double mov_servo1=90;
+    double mov_servo2=150;
+    double mov_servo3=150;
+//Flag para evitar escritura constante por pantalla
     int pantalla=0;
-
+//Buffer para escritura por pantalla
     char BufX[50];
     char BufY[50];
     char Buff[100];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_ADC1_Init(void);
-static void MX_ADC2_Init(void);
-static void MX_ADC3_Init(void);
-static void MX_TIM1_Init(void);
-static void MX_TIM2_Init(void);
-static void MX_TIM3_Init(void);
-static void MX_TIM4_Init(void);
-static void MX_I2C1_Init(void);
-static void MX_SPI1_Init(void);
-static void MX_TIM8_Init(void);
+	void SystemClock_Config(void);
+	static void MX_GPIO_Init(void);
+	static void MX_ADC1_Init(void);
+	static void MX_ADC2_Init(void);
+	static void MX_ADC3_Init(void);
+	static void MX_TIM1_Init(void);
+	static void MX_TIM2_Init(void);
+	static void MX_TIM3_Init(void);
+	static void MX_TIM4_Init(void);
+	static void MX_I2C1_Init(void);
+	static void MX_SPI1_Init(void);
+	static void MX_TIM8_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -119,68 +123,68 @@ static void MX_TIM8_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 /*-----------------------------Shoot init-------------------------------------------------*/
-void ShootPWMInit(uint16_t s){
-	__HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1,s);
-}
+	void ShootPWMInit(uint16_t s){
+		__HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1,s);
+	}
 /*---------------------------End Shoot init-------------------------------------------------*/
 
 /*-------------------------------------ServoADC Code--------------------------------------*/
-float GetPosition(uint32_t val){
-	return ((float)val/ADCResolution)*ServoRange;
-}
+	float GetPosition(uint32_t val){
+		return ((float)val/ADCResolution)*ServoRange;
+	}
 
-uint32_t ReadServo(ADC_HandleTypeDef* hadc){
-	uint32_t value;
+	uint32_t ReadServo(ADC_HandleTypeDef* hadc){
+		uint32_t value;
 
-	HAL_ADC_Start(hadc);
-		  if (HAL_ADC_PollForConversion(hadc,HAL_MAX_DELAY)==HAL_OK) {
-		   value = HAL_ADC_GetValue(hadc);
-		  }
-	HAL_ADC_Stop(hadc);
+		HAL_ADC_Start(hadc);
+			  if (HAL_ADC_PollForConversion(hadc,HAL_MAX_DELAY)==HAL_OK) {
+			   value = HAL_ADC_GetValue(hadc);
+			  }
+		HAL_ADC_Stop(hadc);
 
-	return value;
+		return value;
 	}
 
 /*----------------------------------ServoADC Code End--------------------------------------*/
 /*----------------------------------Display Code-------------------------------------------*/
-void DrawDisplay(){
-	memset(Buff,0,sizeof(Buff));
-	gcvt(Pos_S2, 4, BufX);
-	gcvt(Pos_S3, 4, BufY);
-	strcat(Buff,"X:");
-	strcat(Buff,BufX);
-	strcat(Buff," Y:");
-	strcat(Buff,BufY);
-	lcd_enviar( "TARGET DETECTED", 0, 0);
-	lcd_enviar(Buff , 1, 0);
-}
+	void DrawDisplay(){
+		memset(Buff,0,sizeof(Buff));
+		gcvt(Pos_S2, 4, BufX);
+		gcvt(Pos_S3, 4, BufY);
+		strcat(Buff,"X:");
+		strcat(Buff,BufX);
+		strcat(Buff," Y:");
+		strcat(Buff,BufY);
+		lcd_enviar( "TARGET DETECTED", 0, 0);
+		lcd_enviar(Buff , 1, 0);
+	}
 /*----------------------------------Display Code End---------------------------------------*/
 /*---------------------------------Servo Position Code--------------------------------------*/
-void SetPosition(TIM_HandleTypeDef *htim,uint16_t PulseWidth){
-	if(htim->Instance == TIM1)
-		__HAL_TIM_SET_COMPARE(htim, TIM_CHANNEL_1, PulseWidth);
-	else if(htim->Instance == TIM2)
-		__HAL_TIM_SET_COMPARE(htim, TIM_CHANNEL_2, PulseWidth);
-	else if(htim->Instance == TIM3)
-		__HAL_TIM_SET_COMPARE(htim, TIM_CHANNEL_3, PulseWidth);
-}
+	void SetPosition(TIM_HandleTypeDef *htim,uint16_t PulseWidth){
+		if(htim->Instance == TIM1)
+			__HAL_TIM_SET_COMPARE(htim, TIM_CHANNEL_1, PulseWidth);
+		else if(htim->Instance == TIM2)
+			__HAL_TIM_SET_COMPARE(htim, TIM_CHANNEL_2, PulseWidth);
+		else if(htim->Instance == TIM3)
+			__HAL_TIM_SET_COMPARE(htim, TIM_CHANNEL_3, PulseWidth);
+	}
 
-void Rotate(){
-
-    HAL_Delay(10);
-	if(dir == 0 && coord1 <= 210) {
-		coord1=coord1+3;
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, coord1);//2,1ms represents 180º
-			if (coord1==210)
+	void Rotate(){
+		HAL_Delay(10);
+		if(dir == 0 && mov_servo1 <= 210) {
+			mov_servo1=mov_servo1+3;
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, mov_servo1);//2,1ms represents 180º
+			if (mov_servo1==210)
 				dir = 1;
 		}
-	if(dir == 1 && coord1 >= 90) {
-		coord1-=3;
-		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, coord1);//2,1ms represents 180º
-			if (coord1<=90)
+
+		if(dir == 1 && mov_servo1 >= 90) {
+			mov_servo1-=3;
+			__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, mov_servo1);//2,1ms represents 180º
+			if (mov_servo1<=90)
 				dir = 0;
 		}
-}
+	}
 /*-------------------------------Servo Position Code End--------------------------------------*/
 
 /*-------------------------------------HCSR-04 Code--------------------------------------*/
@@ -193,20 +197,20 @@ void Rotate(){
 
 	void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 	{
-		if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_4)  //Channel 4 is exclusively used for HCSR-04 management
+		if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_4)  //El canal 4 se utiliza exclusivamente para la gestión del HCSR-04.
 		{
-			if (Is_First_Captured==0) // if the first value is not captured
+			if (Is_First_Captured==0) //Si el primer valor no es capturado
 			{
-				IC_Val1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_4); // read the first value
-				Is_First_Captured = 1;  // set the first captured as true
-				// Now change the polarity to falling edge
+				IC_Val1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_4); // Lee el primer valor
+				Is_First_Captured = 1;  // Establece el primero capturado como verdadero
+				//Ahora cambia la polaridad al flanco descendente.
 				__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_4, TIM_INPUTCHANNELPOLARITY_FALLING);
 			}
 
-			else if (Is_First_Captured==1)   // if the first is already captured
+			else if (Is_First_Captured==1)   //Si el primero ya esta capturado
 			{
-				IC_Val2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_4);  // read second value
-				__HAL_TIM_SET_COUNTER(htim, 0);  // reset the counter
+				IC_Val2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_4);  //Lee el segundo valor
+				__HAL_TIM_SET_COUNTER(htim, 0);  //Resetea el contador
 
 				if (IC_Val2 > IC_Val1)
 				{
@@ -219,10 +223,10 @@ void Rotate(){
 				}
 
 				Distance = Difference * (0.34/2);
-				//Distance = Difference;
-				Is_First_Captured = 0; // set it back to false
 
-				// set polarity to rising edge
+				Is_First_Captured = 0; //Vuelve a ponerlo en falso
+
+				// Establece la polaridad en el flanco ascendente
 				__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_4, TIM_INPUTCHANNELPOLARITY_RISING);
 				__HAL_TIM_DISABLE_IT(&htim4, TIM_IT_CC1);
 			}
@@ -231,9 +235,9 @@ void Rotate(){
 
 	void HCSR04_Read (void)
 	{
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET); // pull the TRIG pin HIGH
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET); //TRIG pin HIGH
 		delay(10);  // wait for 10 us
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);// pull the TRIG pin low
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);// TRIG pin LOW
 
 		__HAL_TIM_ENABLE_IT(&htim4, TIM_IT_CC1);
 	}
@@ -267,67 +271,52 @@ void Rotate(){
 
 	    //Boton lateral o central como seguro
 	    if(boton2)
-	    	          {
-	    	//Valores de coordenadas en x e y para azimut y giro
-	    		          x_value= 100-100*cos((M_PI*angulo_grados)/180);
-	    		          y_value= 100+100*sin((M_PI*angulo_grados)/180);
+		  {
+	    	  //Valores de coordenadas en x e y para azimut y giro
+			  x_value= 100-100*cos((M_PI*angulo_grados)/180);
+			  y_value= 100+100*sin((M_PI*angulo_grados)/180);
 
-	    		          //pos_servo2=90.0+(120.0/200.0)*(x_value);
-						  if(x_value>50.0 && pos_servo2<210.0)pos_servo2+=1;
-						  if(x_value<150.0 && pos_servo2>90.0)pos_servo2-=1;
-						  //pos_servo3=90.0+(120.0/200.0)*(y_value);
-						  if(y_value<50.0 && pos_servo3<210.0)pos_servo3+=1;
-						  if(y_value>150.0 && pos_servo3>90.0)pos_servo3-=1;
+			  //Movimiento de los servomotores con margen de limitación para evitar errores de medida
+			  if(x_value>50.0 && mov_servo2<210)mov_servo2+=1;
+			  if(x_value<150.0 && mov_servo2>90)mov_servo2-=1;
+			  if(y_value<50.0 && mov_servo3<210)mov_servo3+=1;
+			  if(y_value>150.0 && mov_servo3>90)mov_servo3-=1;
 
-	    		          //Sector 0-60
-	    		          if(v_directorx>1 && v_directory> 1 && v_directory< 3)
-	    		            {
-	    		          	 angulo_grados=60*1.0*angulo/255;
-	    		            }
-	    		          //Sector 60-90
-	    		            else if(v_directory== 3 && v_directorx>1)
-	    		            {
-	    		          	 angulo_grados= 60+30*angulo*1.0/68;
-	    		            }
-	    		          //Sector 90-120
-	    		            else if(v_directory== 3 && v_directorx<2)
-	    		            {
-	    		            	 angulo_grados= 90+30*(68-angulo)*1.0/68;
-	    		            }
-	    		          //Sector 120-180
-	    		            else if(v_directorx<2 && v_directory> 1 && v_directory< 3)
-	    		            {
-	    		               angulo_grados= 120+60*(255-angulo)*1.0/255;
-	    		            }
-	    		          //Sector 180-240
-	    		            else if(v_directorx<2 && v_directory< 2 && v_directory> 0)
-	    		            {
-	    		               angulo_grados= 180+60*(255-angulo)*1.0/255;
-	    		            }
-	    		          //Sector 240-270
-	    		            else if(v_directory== 0 && v_directorx<2)
-	    		            {
-	    		               angulo_grados= 240-30*(angulo-255)*1.0/68;
-	    		            }
-	    		          //Sector 270-300
-	    		            else if(v_directory== 0 && v_directorx>1)
-	    		            {
-	    		                 angulo_grados= 270+30*(angulo-255+68)*1.0/68;
-	    		            }
-	    		          //Sector 300-330
-	    		            else if(v_directorx>1 && v_directory< 2 && v_directory> 0)
-	    		            {
-	    		          	 angulo_grados= 300+60*(angulo)*1.0/255;
-	    		            }
-	    	          }
-	    	          else
-	    	          {
-	    	        	  //Si se ha quitado el seguro valores por defecto a cero y la torreta se queda inmovil
-	    	        	  //x_value= 0;
-	    	        	  //y_value= 0;
-	    	          }
+			  //Sector 0-60
+			  if(v_directorx>1 && v_directory> 1 && v_directory< 3){
+				  angulo_grados=60*1.0*angulo/255;
+			  }
+			  //Sector 60-90
+			  else if(v_directory== 3 && v_directorx>1){
+				  angulo_grados= 60+30*angulo*1.0/68;
+		      }
+			  //Sector 90-120
+			  else if(v_directory== 3 && v_directorx<2){
+				  angulo_grados= 90+30*(68-angulo)*1.0/68;
+			  }
+			  //Sector 120-180
+		      else if(v_directorx<2 && v_directory> 1 && v_directory< 3){
+				  angulo_grados= 120+60*(255-angulo)*1.0/255;
+			  }
+			  //Sector 180-240
+			  else if(v_directorx<2 && v_directory< 2 && v_directory> 0){
+				  angulo_grados= 180+60*(255-angulo)*1.0/255;
+		      }
+			  //Sector 240-270
+			  else if(v_directory== 0 && v_directorx<2){
+				 angulo_grados= 240-30*(angulo-255)*1.0/68;
+		      }
+			  //Sector 270-300
+				else if(v_directory== 0 && v_directorx>1){
+			     angulo_grados= 270+30*(angulo-255+68)*1.0/68;
+			  }
+			  //Sector 300-330
+			  else if(v_directorx>1 && v_directory< 2 && v_directory> 0){
+				 angulo_grados= 300+60*(angulo)*1.0/255;
+
+			  }
+		  }
 	}
-	//Joystick
 
 /* USER CODE END 0 */
 
@@ -345,83 +334,83 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	  HAL_Init();
 
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+	  SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_ADC1_Init();
-  MX_ADC2_Init();
-  MX_ADC3_Init();
-  MX_TIM1_Init();
-  MX_TIM2_Init();
-  MX_TIM3_Init();
-  MX_TIM4_Init();
-  MX_I2C1_Init();
-  MX_SPI1_Init();
-  MX_TIM8_Init();
+	  MX_GPIO_Init();
+	  MX_ADC1_Init();
+	  MX_ADC2_Init();
+	  MX_ADC3_Init();
+	  MX_TIM1_Init();
+	  MX_TIM2_Init();
+	  MX_TIM3_Init();
+	  MX_TIM4_Init();
+	  MX_I2C1_Init();
+	  MX_SPI1_Init();
+	  MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
- 	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
- 	  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
- 	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
- 	  HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
- 	  HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_4);
- 	  lcd_init();
- 	  ShootPWMInit(3125);
- 	  lcd_clear();
+	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+	  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+	  HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+	  HAL_TIM_IC_Start_IT(&htim4, TIM_CHANNEL_4);
+	  lcd_init();
+	  ShootPWMInit(3125);
+	  lcd_clear();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
-	HCSR04_Read();
-
-	 Pos_S1 = GetPosition(ReadServo(&hadc1));
-	 Pos_S2 = GetPosition(ReadServo(&hadc2));
-	 Pos_S3 = GetPosition(ReadServo(&hadc3));
-
-	Rotate();
-	SetPosition(&htim2, pos_servo2);
-	SetPosition(&htim3, pos_servo3);
-	//  Pos_S3 = GetPosition(ReadServo(&hadc3));
-
-	  if(Distance < 10){
-		  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,1);
-
-		  if (pantalla==0){
-		    DrawDisplay();
-		    pantalla=1;
-		  }
-	  }
-	  else{
-		  HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,0);
-		  if (pantalla==1){
-	  	    lcd_clear();
-		    pantalla=0;
-		  }
-	  }
-
-	  //Llamada a la función de lectura
-	  	          read_joystick_position();
-
-	  	          // Retardo recomendado en la DATASHEET
-	  	          HAL_Delay(10);
+	  	//Lectura del sensor de ultrasonidos
+		HCSR04_Read();
+		//Obtención de la posicion de los servos
+		Pos_S2 = GetPosition(ReadServo(&hadc2));
+		Pos_S3 = GetPosition(ReadServo(&hadc3));
+		//Lectura de la posición del Joystick
+	    read_joystick_position();
+		//Constante movimiento del servo responsable del sensor
+		Rotate();
+		//Movimiento de los servomotores
+		SetPosition(&htim2, mov_servo2);
+		SetPosition(&htim3, mov_servo3);
+		//Escritura por pantalla dependiente de la distancia detectada por el servomotor
+		if(Distance < 10){
+			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,1);
+			if (pantalla==0){
+				//Salida por pantalla
+				DrawDisplay();
+				pantalla=1;
+			}
+		}
+		else{
+			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_12,0);
+			if (pantalla==1){
+				//Salida por pantalla
+				lcd_clear();
+				pantalla=0;
+			}
+		}
+	   // Retardo recomendado en la DATASHEET
+	   HAL_Delay(10);
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
   }
+
   /* USER CODE END 3 */
 }
 
